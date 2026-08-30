@@ -12,8 +12,16 @@ requires-python = ">=3.10"
 scopeout = "scopeout.cli:main"
 
 [project.optional-dependencies]
-dev = ["pytest>=7.0"]
+# CLI-only development / test dependencies.
+dev = ["pytest>=7.0", "httpx"]
+# Dependencies for the read-only web/API layer (scopeout.web).
+web = ["fastapi>=0.110", "uvicorn>=0.29"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+
+# Explicit package discovery: only `scopeout` is a Python package. The
+# top-level `api/`, `examples/`, and `tests/` directories are NOT packages.
+[tool.setuptools.packages.find]
+include = ["scopeout*"]

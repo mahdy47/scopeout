@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>ScopeOut Web — Engagement Dashboard</title>
+<style>
+  :root{
+    --bg:#0b0f14; --panel:#121821; --panel2:#16202b; --line:#223040;
+    --txt:#dbe4ee; --muted:#8a9ab0; --accent:#34d399; --accent2:#22d3ee;
+    --warn:#fbbf24; --danger:#f87171; --mono:#c9d7e6;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--txt);
+    font:14px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    padding-bottom:60px;
+  }
+  a{color:var(--accent2)}
+  header.top{
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    padding:16px 24px; background:linear-gradient(90deg,#0d131b,#101c17);
+    border-bottom:1px solid var(--line); position:sticky; top:0; z-index:5;
+  }
+  header.top h1{margin:0; font-size:18px; letter-spacing:.5px}
+  header.top h1 .dot{color:var(--accent)}
+  .badge{
+    font:12px/1 var(--mono),monospace; padding:6px 10px; border-radius:999px;
+    border:1px solid var(--line); color:var(--muted); background:var(--panel);
+  }
+  .badge.ok{color:var(--accent); border-color:#1a4a3b}
+  main{max-width:1200px; margin:0 auto; padding:24px}
+  nav.tabs{display:flex; flex-wrap:wrap; gap:6px; margin:0 0 22px}
+  nav.tabs button{
+    background:var(--panel); color:var(--muted); border:1px solid var(--line);
+    border-radius:8px; padding:8px 14px; cursor:pointer; font-size:13px;
+  }
+  nav.tabs button:hover{color:var(--txt)}
+  nav.tabs button.active{color:var(--txt); border-color:var(--accent); background:var(--panel2)}
+  section.tab{display:none}
+  section.tab.active{display:block}
+  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:14px; margin-bottom:24px}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px}
+  .card .k{color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.4px}
+  .card .v{font-size:28px; font-weight:650; margin-top:6px; font-variant-numeric:tabular-nums}
+  .card .v.warn{color:var(--warn)}
+  .card .sub{font-size:12px; color:var(--muted); margin-top:4px}
+  .progress{height:8px; background:var(--panel2); border-radius:999px; overflow:hidden; margin-top:10px}
+  .progress > span{display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2))}
+  table{width:100%; border-collapse:collapse; background:var(--panel); border:1px solid var(--line); border-radius:10px; overflow:hidden}
+  th,td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); font-size:13px; vertical-align:top}
+  th{color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.4px; background:var(--panel2)}
+  tr:last-child td{border-bottom:none}
+  td.mono{font-family:var(--mono),monospace; font-size:12px}
+  .pill{display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; border:1px solid var(--line)}
+  .pill.open{color:var(--warn); border-color:#5b4518}
+  .pill.done{color:var(--accent); border-color:#1a4a3b}
+  .pill.block{color:var(--danger); border-color:#5b2020}
+  .muted{color:var(--muted)}
+  .empty{padding:24px; color:var(--muted); text-align:center; background:var(--panel); border:1px dashed var(--line); border-radius:10px}
+  pre.report{
+    background:#0a0f14; border:1px solid var(--line); border-radius:10px; padding:20px;
+    overflow-x:auto; font:13px/1.55 var(--mono),monospace; color:var(--mono); white-space:pre-wrap; word-break:break-word;
+  }
+  pre.report .h1{font-size:18px; font-weight:700; color:var(--txt); margin:14px 0 6px}
+  pre.report .h2{font-size:15px; font-weight:700; color:var(--accent2); margin:18px 0 4px}
+  pre.report .h3{font-size:14px; font-weight:700; color:var(--accent); margin:14px 0 4px}
+  pre.report .h5{font-weight:650; color:var(--warn); margin:10px 0 2px}
+  .err{padding:16px; background:var(--panel); border:1px solid var(--danger); border-radius:10px; color:var(--danger)}
+  @media(max-width:600px){
+    main{padding:16px} header.top{padding:12px 16px}
+    .card .v{font-size:22px}
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <h1><span class="dot">▲</span> ScopeOut <span class="muted">Web</span></h1>
+  <div style="display:flex;gap:8px;align-items:center">
+    <span class="badge" id="mode">mode: …</span>
+    <span class="badge" id="health">health: …</span>
+  </div>
+</header>
+
+<main>
+  <nav class="tabs">
+    <button data-tab="overview" class="active">Overview</button>
+    <button data-tab="hosts">Hosts</button>
+    <button data-tab="services">Services</button>
+    <button data-tab="leads">Leads</button>
+    <button data-tab="coverage">Coverage</button>
+    <button data-tab="observations">Observations</button>
+    <button data-tab="report">Report</button>
+    <button data-tab="credentials">Credentials</button>
+  </nav>
+
+  <section class="tab active" id="tab-overview">
+    <div class="cards" id="stat-cards"></div>
+    <div id="overview-meta" class="muted" style="margin-bottom:16px"></div>
+    <h3 style="color:var(--muted);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.5px">Engine status</h3>
+    <pre class="report" id="engine-status"></pre>
+  </section>
+
+  <section class="tab" id="tab-hosts"><div id="hosts"></div></section>
+  <section class="tab" id="tab-services"><div id="services"></div></section>
+  <section class="tab" id="tab-leads"><div id="leads"></div></section>
+  <section class="tab" id="tab-coverage"><div id="coverage"></div></section>
+  <section class="tab" id="tab-observations"><div id="observations"></div></section>
+  <section class="tab" id="tab-report"><pre class="report" id="report"></pre></section>
+  <section class="tab" id="tab-credentials"><div id="credentials"></div></section>
+</main>
+
+<script>
+"use strict";
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => (
+  {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]
+));
+const empty = (msg) => `<div class="empty">${msg}</div>`;
+
+async function api(path){
+  const r = await fetch(path);
+  if(!r.ok){
+    let detail = "";
+    try{ detail = JSON.stringify(await r.json()); }catch(_){}
+    throw new Error(`${path} → HTTP ${r.status} ${r.statusText} ${detail}`.trim());
+  }
+  return r.json();
+}
+
+function tabHeaders(){
+  return "<thead><tr>" + Array.from(arguments).map((h)=>`<th>${h}</th>`).join("") + "</tr></thead>";
+}
+
+/* ---- markdown renderer (safe: escapes first) ---- */
+function renderMarkdown(md){
+  const lines = String(md || "").split("\n");
+  let html = ""; let inCode = false;
+  for(const raw of lines){
+    const line = esc(raw);
+    if(line.startsWith("```")){ inCode = !inCode; html += "<br>"; continue; }
+    if(inCode){ html += line + "<br>"; continue; }
+    if(line.startsWith("#####")){ html += `<div class="h5">${line.replace(/^#+\s*/,"")}</div>`; continue; }
+    if(line.startsWith("###")){ html += `<div class="h3">${line.replace(/^#+\s*/,"")}</div>`; continue; }
+    if(line.startsWith("##")){ html += `<div class="h2">${line.replace(/^#+\s*/,"")}</div>`; continue; }
+    if(line.startsWith("#")){ html += `<div class="h1">${line.replace(/^#+\s*/,"")}</div>`; continue; }
+    if(/^\|/.test(line)){ html += line + "<br>"; continue; }
+    if(/^\s*[-+*]\s/.test(line)){ html += "• " + line.replace(/^\s*[-+*]\s*/,"") + "<br>"; continue; }
+    if(/^_/.test(line)){ html += `<span class="muted">${line.replace(/_/g,"")}</span><br>`; continue; }
+    html += line + "<br>";
+  }
+  return html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+             .replace(/`(.+?)`/g, "<code>$1</code>");
+}
+
+/* ---- Overview ---- */
+async function loadOverview(){
+  const s = await api("/api/summary");
+  const covPct = s.coverage_total ? Math.round(100*s.coverage_tested/s.coverage_total) : 0;
+  const cards = [
+    ["Total hosts", s.total_hosts],
+    ["Total services", s.total_services],
+    ["Open leads", s.open_leads, "warn"],
+    ["Completed leads", s.completed_leads],
+    ["Coverage", s.coverage_tested + " / " + s.coverage_total],
+    ["Observations", s.observations],
+    ["Next leads", s.next_leads, "warn"],
+  ].map(([k,v,cls]) => `<div class="card"><div class="k">${k}</div><div class="v ${cls||""}">${v}</div></div>`).join("");
+
+  const covHtml = s.coverage_total
+    ? `<div class="card"><div class="k">Coverage progress</div><div class="v">${covPct}%</div><div class="sub">${s.coverage_tested} of ${s.coverage_total} methodology items tested</div><div class="progress"><span style="width:${covPct}%"></span></div></div>`
+    : "";
+  $("stat-cards").innerHTML = cards + covHtml;
+  $("overview-meta").innerHTML =
+    `Read-only snapshot of the current engagement model. Open leads are prioritized work; completed leads are recorded findings.`;
+  $("engine-status").innerHTML = renderMarkdown(
+    `# ScopeOut\n\n**Engagement-state engine** — decision support only.\n\n` +
+    `- Assets → Services → Leads/Results → Coverage (live model)\n` +
+    `- Read-only web snapshot sourced from real core data (no writes)\n` +
+    `- Credentials are redacted; no automated auth, brute force, or exploitation\n`
+  );
+}
+
+/* ---- Hosts ---- */
+function renderHosts(list){
+  if(!list.length) return empty("No hosts in scope.");
+  $("hosts").innerHTML = `<table>${tabHeaders("Host","Hostname","OS","Services","First seen")}` +
+    list.map(h=>`<tr>
+      <td class="mono">${esc(h.ip)}</td>
+      <td>${esc(h.hostname)||'<span class="muted">—</span>'}</td>
+      <td>${esc(h.os)||'<span class="muted">—</span>'}</td>
+      <td>${h.service_count}</td>
+      <td class="mono">${esc(h.created_at)}</td>
+    </tr>`).join("") + "</table>";
+}
+
+/* ---- Services ---- */
+function renderServices(list){
+  if(!list.length) return empty("No services recorded.");
+  $("services").innerHTML = `<table>${tabHeaders("Host","Port","Protocol","Service","Version / banner")}` +
+    list.map(s=>`<tr>
+      <td class="mono">${esc(s.host)}</td>
+      <td class="mono">${s.port}</td>
+      <td>${esc(s.proto)}</td>
+      <td>${esc(s.name)||'<span class="muted">unknown</span>'}</td>
+      <td class="mono">${esc(s.version||s.banner||"—")}</td>
+    </tr>`).join("") + "</table>";
+}
+
+/* ---- Leads ---- */
+function renderLeads(list){
+  if(!list.length) return empty("No leads recorded.");
+  const pill = {OPEN:"open", DONE:"done", BLOCKED:"block"};
+  $("leads").innerHTML = `<table>${tabHeaders("Title","Host:port","Status","Reason","Evidence","Created / closed")}` +
+    list.map(l=>`<tr>
+      <td>${esc(l.title)}</td>
+      <td class="mono">${esc(l.host)}:${l.port}</td>
+      <td><span class="pill ${pill[l.status]||''}">${esc(l.status)}</span></td>
+      <td>${esc(l.reason)||'<span class="muted">—</span>'}</td>
+      <td class="mono">${esc(l.evidence)||'<span class="muted">—</span>'}</td>
+      <td class="mono">${esc(l.created_at)}${l.closed_at?"<br>"+esc(l.closed_at):""}</td>
+    </tr>`).join("") + "</table>";
+}
+
+/* ---- Coverage ---- */
+function renderCoverage(list){
+  if(!list.length) return empty("No coverage items yet.");
+  $("coverage").innerHTML = `<table>${tabHeaders("Host:port","Service","Activity","State")}` +
+    list.map(c=>`<tr>
+      <td class="mono">${esc(c.host)}:${c.port}</td>
+      <td>${esc(c.service)}</td>
+      <td>${esc(c.activity)}</td>
+      <td><span class="pill ${c.tested?"done":"open"}">${c.tested?"tested":"pending"}</span></td>
+    </tr>`).join("") + "</table>";
+}
+
+/* ---- Observations ---- */
+function renderObservations(list){
+  if(!list.length) return empty("No observations recorded.");
+  $("observations").innerHTML = `<table>${tabHeaders("Host:port","Observation","Recorded")}` +
+    list.map(o=>`<tr>
+      <td class="mono">${esc(o.host)}:${o.port}</td>
+      <td>${esc(o.text)}</td>
+      <td class="mono">${esc(o.created_at)}</td>
+    </tr>`).join("") + "</table>";
+}
+
+/* ---- Report ---- */
+async function loadReport(){
+  const r = await api("/api/report");
+  $("report").innerHTML = renderMarkdown(r.report);
+}
+
+/* ---- Credentials (redacted) ---- */
+function renderCredentials(list){
+  if(!list.length) return empty("No credentials recorded. Use <code>scopeout auth add</code>.");
+  $("credentials").innerHTML = `<table>${tabHeaders("Host:port","Username","Credential","Origin")}` +
+    list.map(c=>`<tr>
+      <td class="mono">${esc(c.host)}:${c.port}</td>
+      <td class="mono">${esc(c.username)}</td>
+      <td><span class="pill block">${esc(c.credential)}</span></td>
+      <td class="mono">${esc(c.origin)||'<span class="muted">observed here</span>'}</td>
+    </tr>`).join("") + "</table>" +
+    `<p class="muted" style="margin-top:10px;font-size:12px">Raw credential values are redacted and never exposed to the web interface, matching the CLI report behavior.</p>`;
+}
+
+/* ---- boot ---- */
+document.querySelectorAll("nav.tabs button").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll("section.tab").forEach(s=>s.classList.remove("active"));
+    btn.classList.add("active");
+    $("tab-"+btn.dataset.tab).classList.add("active");
+  });
+});
+
+async function init(){
+  try{
+    const h = await api("/api/health");
+    $("health").textContent = "health: " + h.status;
+    $("mode").textContent = "mode: " + h.mode;
+  }catch(e){
+    $("health").textContent = "health: error";
+  }
+  loadOverview().catch(e => { $("stat-cards").innerHTML = `<div class="err">${esc(e.message)}</div>`; });
+
+  const [hosts, services, leads, coverage, observations, credentials] = await Promise.all([
+    api("/api/hosts"), api("/api/services"), api("/api/leads"),
+    api("/api/coverage"), api("/api/observations"), api("/api/credentials"),
+  ]);
+  renderHosts(hosts);
+  renderServices(services);
+  renderLeads(leads);
+  renderCoverage(coverage);
+  renderObservations(observations);
+  renderCredentials(credentials);
+  await loadReport();
+}
+init().catch(e => {
+  document.querySelector("main").innerHTML = `<div class="err"><strong>Failed to load ScopeOut Web:</strong> ${esc(e.message)}</div>`;
+});
+</script>
+</body>
+</html>

@@ -182,7 +182,11 @@ CREATE INDEX IF NOT EXISTS idx_credentials_service
 
 class Store:
     def __init__(self, path: str = ":memory:"):
-        self.conn = sqlite3.connect(path)
+        # check_same_thread=False allows the read-only web layer (which runs
+        # handlers in a threadpool) to query the store from any thread. The CLI
+        # is single-threaded, so this is a no-op there. The web layer only
+        # reads, so there is no concurrent-write hazard to serialize.
+        self.conn = sqlite3.connect(path, check_same_thread=False)
         self.conn.row_factory = sqlite3.Row
         self.conn.execute("PRAGMA foreign_keys = ON")
         self.conn.executescript(_SCHEMA)

@@ -1,0 +1,5 @@
+# Vercel Python runtime dependencies.
+# ScopeOut core has NO runtime dependencies (stdlib only: sqlite3, xml, argparse).
+# These are the only additions needed to serve the read-only web/API layer.
+fastapi>=0.110
+uvicorn>=0.29

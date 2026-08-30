@@ -269,8 +269,82 @@ Services with no preset are still tracked and show up as
 ## Development
 
 ```bash
+# CLI-only test/development dependencies
 pip install -e ".[dev]"
+
+# Everything above PLUS the web/API layer (FastAPI, uvicorn)
+pip install -e ".[dev,web]"
+
 python -m pytest -q
+```
+
+## Web interface (read-only dashboard)
+
+`scopeout` ships a **read-only** web dashboard and HTTP API that reuse the
+same core engine as the CLI. The CLI remains fully functional and unchanged;
+the web layer only adds request/response adapters around `scopeout.core`.
+
+### Run locally
+
+```bash
+pip install -e ".[dev,web]"
+python -m uvicorn api.index:app --reload
+# open http://127.0.0.1:8000
+```
+
+### API endpoints (all read-only)
+
+| Endpoint | Description |
+| --- | --- |
+| `GET /` | Dashboard (HTML) |
+| `GET /api/health` | Service health + mode |
+| `GET /api/hosts` | Hosts in scope (ip, hostname, OS, service count) |
+| `GET /api/services` | Discovered services (`?asset_id=` filters by host) |
+| `GET /api/leads` | Leads with host:port, status, reason, evidence |
+| `GET /api/coverage` | Coverage items + tested/pending state |
+| `GET /api/observations` | Observations / recon notes |
+| `GET /api/credentials` | Credential **usernames only** — values always redacted |
+| `GET /api/report` | The existing Markdown engagement report |
+| `GET /api/summary` | Dashboard totals (hosts, leads, coverage progress) |
+
+All endpoints map 1:1 onto core functions (`Store.list_*`, `planner.next_leads`,
+`report.build_report`). No business logic is duplicated in the web layer.
+
+### Persistence model — read-only snapshot
+
+scopeout's core uses a local SQLite `Store`. Vercel serverless filesystems are
+**ephemeral and non-persistent**, so a writable local SQLite file cannot persist
+between invocations in production.
+
+The web interface therefore serves a **read-only snapshot** seeded once from a
+real dataset (`examples/sample.xml`) through the **same core importer** the CLI
+uses. It is explicitly **not** a persistent, write-capable service:
+
+- There are **no write/mutation endpoints** (no POST/PUT/DELETE).
+- Nothing is written to the ephemeral filesystem, so nothing is silently lost.
+- Credential values are redacted everywhere (matching the CLI report).
+
+A write-persistent deployment would require an external database (e.g.
+Vercel/Neon Postgres or Turso/libSQL) behind a `Store`-compatible adapter, plus
+a `DATABASE_URL`-style secret. That is intentionally out of scope for this
+read-only milestone.
+
+### Deploy to Vercel
+
+The repo already contains the required Vercel configuration (`api/index.py`,
+`vercel.json`, `requirements.txt`, `.gitignore` ignores `.vercel/` and `.env`).
+
+1. Push this branch/commit to GitHub.
+2. In Vercel, **Import Project** → select `mahdy47/scopeout` (Framework Preset:
+   *Other*). The Python function at `api/index.py` is auto-detected.
+3. No secret env vars are required for the read-only snapshot. If you later add
+   an external DB, add it as a Vercel Environment Variable (never commit it).
+
+Alternatively, from a machine with Vercel auth:
+
+```bash
+vercel                      # link project
+vercel --prod               # production deploy
 ```
 
 ## License

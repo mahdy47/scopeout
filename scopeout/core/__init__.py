@@ -1,0 +1,1 @@
+"""scopeout.core - Core package."""

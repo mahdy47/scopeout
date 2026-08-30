@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scopeout"
+version = "0.1.0"
+description = "Engagement-state engine for penetration testing - assets, services, leads, coverage."
+requires-python = ">=3.10"
+
+[project.scripts]
+scopeout = "scopeout.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Nmap 7.94 scan initiated Sun Aug 30 2026 as: nmap -sV -oX sample.xml 10.10.10.25 10.10.10.30 -->
+<nmaprun scanner="nmap" args="nmap -sV -oX sample.xml 10.10.10.25 10.10.10.30" start="1782960000" startstr="Sun Aug 30 13:00:00 2026" version="7.94" xmloutputversion="1.04">
+<scaninfo type="syn" protocol="tcp" numservices="1000"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<host starttime="1782960001" endtime="1782960018"><status state="up" reason="syn-ack" reason_ttl="0"/>
+<address addr="10.10.10.25" addrtype="ipv4"/>
+<hostnames><hostname name="ws01.lab.local" type="PTR"/></hostnames>
+<ports><port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="ssh" product="OpenSSH" version="8.2p1 Ubuntu 4ubuntu0.3" extrainfo="protocol 2.0" method="probed" conf="10"><cpe>cpe:/a:openbsd:openssh:8.2p1</cpe></service></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="http" product="Apache httpd" version="2.4.41" extrainfo="(Ubuntu)" method="probed" conf="10"><cpe>cpe:/a:apache:http_server:2.4.41</cpe></service></port>
+<port protocol="tcp" portid="445"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="netbios-ssn" method="table" conf="3"/></port>
+</ports>
+<osmatch name="Linux 4.15 - 5.8 (91%)" accuracy="91"><osclass type="general purpose" vendor="Linux" osfamily="Linux" osgen="4.X" accuracy="91"><cpe>cpe:/o:linux:linux_kernel</cpe></osclass></osmatch>
+</host>
+<host starttime="1782960019" endtime="1782960036"><status state="up" reason="syn-ack" reason_ttl="0"/>
+<address addr="10.10.10.30" addrtype="ipv4"/>
+<hostnames><hostname name="dc01.lab.local" type="PTR"/></hostnames>
+<ports><port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="ssh" product="OpenSSH" version="8.9p1 Ubuntu 3ubuntu0.1" extrainfo="protocol 2.0" method="probed" conf="10"><cpe>cpe:/a:openbsd:openssh:8.9p1</cpe></service></port>
+<port protocol="tcp" portid="445"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="microsoft-ds" product="Samba" version="4.17.12" method="probed" conf="10"><cpe>cpe:/a:samba:samba:4.17.12</cpe></service></port>
+</ports>
+<osmatch name="Linux 4.15 - 5.8 (86%)" accuracy="86"><osclass type="general purpose" vendor="Linux" osfamily="Linux" osgen="4.X" accuracy="86"><cpe>cpe:/o:linux:linux_kernel</cpe></osclass></osmatch>
+</host>
+<runstats><finished time="1782960037" timestr="Sun Aug 30 13:01:00 2026" elapsed="37.37" summary="Nmap done at Sun Aug 30 13:01:00 2026; 2 IP addresses (2 hosts up) scanned in 37.37 seconds" exit="success"/><hosts up="2" down="0" total="2"/></runstats>
+</nmaprun>

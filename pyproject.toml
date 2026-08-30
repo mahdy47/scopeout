@@ -7,6 +7,11 @@ name = "scopeout"
 version = "0.1.0"
 description = "Engagement-state engine for penetration testing - assets, services, leads, coverage."
 requires-python = ">=3.10"
+# Direct runtime dependencies. FastAPI/uvicorn back the read-only web/API layer
+# (scopeout.web) and are declared here (not as an optional extra) so that the
+# Vercel Python runtime installs them from pyproject.toml. The core/CLI logic
+# itself remains stdlib-only.
+dependencies = ["fastapi>=0.110", "uvicorn>=0.29"]
 
 [project.scripts]
 scopeout = "scopeout.cli:main"
@@ -14,8 +19,6 @@ scopeout = "scopeout.cli:main"
 [project.optional-dependencies]
 # CLI-only development / test dependencies.
 dev = ["pytest>=7.0", "httpx"]
-# Dependencies for the read-only web/API layer (scopeout.web).
-web = ["fastapi>=0.110", "uvicorn>=0.29"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

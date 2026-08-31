@@ -39,13 +39,22 @@ scopeout
 
 ---
 
+## Getting started
+
+For a complete, beginner-friendly walkthrough of the real engagement workflow —
+installing, importing a scan, working leads, recording evidence, coverage,
+credential correlation, planning, reporting, and the read-only web dashboard —
+read **[`docs/USAGE.md`](docs/USAGE.md)**.
+
+---
+
 ## Installation
 
 Requires Python 3.10+.
 
 ```bash
 # from the project root
-pip install -e .
+pip install -e ".[dev]"
 
 # or run without installing
 python -m scopeout --help

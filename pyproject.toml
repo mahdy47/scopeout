@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "scopeout"
-version = "0.1.0"
+version = "2.0.0"
 description = "Engagement-state engine for penetration testing - assets, services, leads, coverage."
 requires-python = ">=3.10"
 # Direct runtime dependencies. FastAPI/uvicorn back the read-only web/API layer

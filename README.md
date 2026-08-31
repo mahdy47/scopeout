@@ -1,8 +1,12 @@
 # scopeout
 
 [![tests](https://github.com/mahdy47/scopeout/actions/workflows/tests.yml/badge.svg)](https://github.com/mahdy47/scopeout/actions/workflows/tests.yml)
+[![python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://github.com/mahdy47/scopeout)
+[![license](https://img.shields.io/badge/license-MIT-22c55e)](LICENSE)
 
 **Engagement-state engine for penetration testing.**
+
+> 🖥️ **Try the live read-only demo:** [scopeout-virid.vercel.app](https://scopeout-virid.vercel.app)
 
 `scopeout` is a purely organizational, decision-support tool that keeps the
 state of your thinking during a pentest. It imports your recon, owns a live

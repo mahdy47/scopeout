@@ -8,7 +8,4 @@ dist/
 .pytest_cache/
 .venv/
 .vercel/
-.env
-
-.vercel
 .env*

@@ -24,11 +24,10 @@ import argparse
 import sys
 from pathlib import Path
 
-from .core import state
+from .core import render, state
 from .core.importer import import_nmap_file
 from .core.model import Store
-from .core.planner import next_leads, credential_suggestions
-from .core import render
+from .core.planner import credential_suggestions, next_leads
 from .core.report import build_report
 
 DEFAULT_DB = "scopeout.db"

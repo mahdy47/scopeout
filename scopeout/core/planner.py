@@ -19,7 +19,6 @@ Priorities (display order):
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
 
 from .model import LeadStatus, Store
 
@@ -92,7 +91,7 @@ def _service_display(name: str) -> str:
     return "Unidentified service"
 
 
-def _dominant_reason(store: Store, service) -> Optional[Reason]:
+def _dominant_reason(store: Store, service) -> Reason | None:
     """Return the single dominant reason for a service, or None if it needs none.
 
     Priority: OPEN_LEADS > DONE_NO_RESULT > DISCOVERED_NOT_COVERED.

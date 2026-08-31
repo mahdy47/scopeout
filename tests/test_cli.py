@@ -6,7 +6,7 @@ These exercise real argument parsing, dispatch, and a real on-disk SQLite store
 
 import pytest
 
-from scopeout.cli import main, DEFAULT_DB
+from scopeout.cli import main
 
 BASE = """<?xml version="1.0" encoding="UTF-8"?>
 <nmaprun version="7.94" xmloutputversion="1.04">

@@ -11,8 +11,6 @@ CLI (M4) and the coverage/notes views:
 
 from __future__ import annotations
 
-from typing import Optional
-
 from .model import LeadStatus, Store
 
 

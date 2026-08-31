@@ -2,10 +2,10 @@
 
 import pytest
 
-from scopeout.core.model import Store, LeadStatus
-from scopeout.core.importer import import_nmap_file
-from scopeout.core.report import build_report
 from scopeout.core import state
+from scopeout.core.importer import import_nmap_file
+from scopeout.core.model import LeadStatus, Store
+from scopeout.core.report import build_report
 
 BASE = """<?xml version="1.0" encoding="UTF-8"?>
 <nmaprun version="7.94" xmloutputversion="1.04">
@@ -265,7 +265,7 @@ def test_credential_leaks_nowhere_across_all_outputs(store):
 
 
 def test_special_chars_in_hostname_and_os(store):
-    sid = _svc(store, "10.1.1.5", 80).id
+    _svc(store, "10.1.1.5", 80)
     store.conn.execute("UPDATE assets SET hostname = ?, os = ? WHERE ip = '10.1.1.5'",
                        ("ws#5|host|`x`\nsecond", "Linux 4.15 (x86_64)\n  | more"))
     store.conn.commit()

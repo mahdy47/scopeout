@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 
 import pytest
 
-from scopeout.core.importer import parse_nmap_xml, import_nmap_file
+from scopeout.core.importer import import_nmap_file, parse_nmap_xml
 from scopeout.core.model import Store
 
 SAMPLE = """<?xml version="1.0" encoding="UTF-8"?>

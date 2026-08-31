@@ -2,9 +2,9 @@
 
 import pytest
 
-from scopeout.core.model import Store, LeadStatus
-from scopeout.core.presets import seed_service, seed_all, preset_for
 from scopeout.core.importer import import_nmap_file
+from scopeout.core.model import LeadStatus, Store
+from scopeout.core.presets import preset_for, seed_all
 
 SAMPLE = """<?xml version="1.0" encoding="UTF-8"?>
 <nmaprun version="7.94" xmloutputversion="1.04">
@@ -115,9 +115,9 @@ def test_seed_all_summary():
     # Build services directly (no auto-seed), then seed_all applies presets.
     store = Store(":memory:")
     aid = store.upsert_asset("10.1.1.5")
-    s_smb = store.upsert_service(aid, 445, name="netbios-ssn")
-    s_http = store.upsert_service(aid, 80, name="http")
-    s_ssh = store.upsert_service(aid, 22, name="ssh")
+    store.upsert_service(aid, 445, name="netbios-ssn")
+    store.upsert_service(aid, 80, name="http")
+    store.upsert_service(aid, 22, name="ssh")
     store.upsert_service(aid, 3306, name="mysql")
 
     res = seed_all(store)

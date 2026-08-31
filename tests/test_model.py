@@ -2,7 +2,7 @@
 
 import pytest
 
-from scopeout.core.model import Store, Asset, Service, LeadStatus
+from scopeout.core.model import LeadStatus, Store
 
 
 @pytest.fixture

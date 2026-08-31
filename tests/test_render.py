@@ -2,11 +2,11 @@
 
 import pytest
 
-from scopeout.core.model import Store, LeadStatus
+from scopeout.core import state
 from scopeout.core.importer import import_nmap_file
+from scopeout.core.model import LeadStatus, Store
 from scopeout.core.planner import next_leads
 from scopeout.core.render import render_leads, render_status
-from scopeout.core import state
 
 BASE = """<?xml version="1.0" encoding="UTF-8"?>
 <nmaprun version="7.94" xmloutputversion="1.04">

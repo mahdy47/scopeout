@@ -1,11 +1,10 @@
 """Tests for the planner (M3) - the three decision states + ordering."""
 
-import pytest
 
-from scopeout.core.model import Store, LeadStatus
-from scopeout.core.importer import import_nmap_file
-from scopeout.core.planner import next_leads, NextLead
 from scopeout.core import state
+from scopeout.core.importer import import_nmap_file
+from scopeout.core.model import LeadStatus, Store
+from scopeout.core.planner import next_leads
 
 BASE = """<?xml version="1.0" encoding="UTF-8"?>
 <nmaprun version="7.94" xmloutputversion="1.04">
@@ -149,7 +148,7 @@ def test_resolved_seeded_services_drop_out(tmp_path):
     store = _make_store(tmp_path)
     smb = _svc(store, 445)
     http = _svc(store, 80)
-    mysql = _svc(store, 3306)
+    _svc(store, 3306)
 
     # close every open lead with a result
     for s in (smb, http):

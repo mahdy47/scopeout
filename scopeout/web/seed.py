@@ -28,7 +28,6 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Optional
 
 from scopeout.core.importer import import_nmap_file
 from scopeout.core.model import Store
@@ -37,7 +36,7 @@ from scopeout.core.model import Store
 _DEFAULT_SEED = Path(__file__).resolve().parents[2] / "examples" / "sample.xml"
 
 
-def _resolve_seed_path(seed_path: Optional[str]) -> Optional[Path]:
+def _resolve_seed_path(seed_path: str | None) -> Path | None:
     """Resolve the seed XML path, honouring an explicit override or env var."""
     if seed_path is not None:
         p = Path(seed_path)
@@ -49,7 +48,7 @@ def _resolve_seed_path(seed_path: Optional[str]) -> Optional[Path]:
     return _DEFAULT_SEED if _DEFAULT_SEED.exists() else None
 
 
-def create_store(seed_path: Optional[str] = None) -> Store:
+def create_store(seed_path: str | None = None) -> Store:
     """Build a read-only in-memory :class:`Store`.
 
     When a seed dataset is available it is imported through the core importer
@@ -60,13 +59,13 @@ def create_store(seed_path: Optional[str] = None) -> Store:
     Callers MUST call ``store.close()`` when done.
     """
     store = Store(":memory:")
-    path: Optional[Path] = None
+    path: Path | None = None
     if seed_path != ":":  # explicit empty sentinel
         path = _resolve_seed_path(seed_path)
     if path is not None:
         try:
             import_nmap_file(store, path)
-        except Exception:
+        except (OSError, Exception):  # noqa: BLE001
             # A broken/missing seed should not take the whole service down;
             # fall back to an empty snapshot so the API still responds.
             store.close()

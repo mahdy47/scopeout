@@ -2,10 +2,16 @@
 
 import pytest
 
-from scopeout.core.model import Store, LeadStatus
 from scopeout.core.importer import import_nmap_file
+from scopeout.core.model import LeadStatus, Store
 from scopeout.core.state import (
-    done, add_lead, note, obs, cover, block, ScopeoutError,
+    ScopeoutError,
+    add_lead,
+    block,
+    cover,
+    done,
+    note,
+    obs,
 )
 
 SAMPLE = """<?xml version="1.0" encoding="UTF-8"?>

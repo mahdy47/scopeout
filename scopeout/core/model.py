@@ -22,7 +22,6 @@ import sqlite3
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Optional
 
 
 def utcnow() -> str:
@@ -44,9 +43,9 @@ class LeadStatus(str, Enum):
 @dataclass
 class Asset:
     ip: str
-    hostname: Optional[str] = None
-    os: Optional[str] = None
-    id: Optional[int] = None
+    hostname: str | None = None
+    os: str | None = None
+    id: int | None = None
     created_at: str = field(default_factory=utcnow)
 
 
@@ -56,16 +55,16 @@ class Service:
     port: int
     proto: str = "tcp"
     name: str = ""
-    version: Optional[str] = None
-    banner: Optional[str] = None
-    id: Optional[int] = None
+    version: str | None = None
+    banner: str | None = None
+    id: int | None = None
 
 
 @dataclass
 class Observation:
     service_id: int
     text: str
-    id: Optional[int] = None
+    id: int | None = None
     created_at: str = field(default_factory=utcnow)
 
 
@@ -75,9 +74,9 @@ class Lead:
     title: str
     status: LeadStatus = LeadStatus.OPEN
     reason: str = ""
-    id: Optional[int] = None
+    id: int | None = None
     created_at: str = field(default_factory=utcnow)
-    closed_at: Optional[str] = None
+    closed_at: str | None = None
 
 
 @dataclass
@@ -85,7 +84,7 @@ class Result:
     lead_id: int
     outcome: str
     evidence: str = ""
-    id: Optional[int] = None
+    id: int | None = None
     created_at: str = field(default_factory=utcnow)
 
 
@@ -94,7 +93,7 @@ class CoverageItem:
     service_id: int
     activity: str
     tested: bool = False
-    id: Optional[int] = None
+    id: int | None = None
 
 
 @dataclass
@@ -103,7 +102,7 @@ class Credential:
     username: str
     credential: str
     origin: str = ""
-    id: Optional[int] = None
+    id: int | None = None
     created_at: str = field(default_factory=utcnow)
 
 
@@ -197,7 +196,7 @@ class Store:
 
     # -- assets -------------------------------------------------------------
 
-    def upsert_asset(self, ip: str, hostname: Optional[str] = None,
+    def upsert_asset(self, ip: str, hostname: str | None = None,
                      os: str | None = None) -> int:
         cur = self.conn.execute(
             "SELECT id FROM assets WHERE ip = ?", (ip,)
@@ -219,7 +218,7 @@ class Store:
         self.conn.commit()
         return int(cur.lastrowid)
 
-    def get_asset(self, asset_id: int) -> Optional[Asset]:
+    def get_asset(self, asset_id: int) -> Asset | None:
         row = self.conn.execute(
             "SELECT * FROM assets WHERE id = ?", (asset_id,)
         ).fetchone()
@@ -237,8 +236,8 @@ class Store:
     # -- services -----------------------------------------------------------
 
     def upsert_service(self, asset_id: int, port: int, proto: str = "tcp",
-                       name: str = "", version: Optional[str] = None,
-                       banner: Optional[str] = None) -> int:
+                       name: str = "", version: str | None = None,
+                       banner: str | None = None) -> int:
         cur = self.conn.execute(
             "SELECT id FROM services WHERE asset_id = ? AND port = ? AND proto = ?",
             (asset_id, port, proto),
@@ -261,7 +260,7 @@ class Store:
         self.conn.commit()
         return int(cur.lastrowid)
 
-    def list_services(self, asset_id: Optional[int] = None) -> list[Service]:
+    def list_services(self, asset_id: int | None = None) -> list[Service]:
         if asset_id is None:
             rows = self.conn.execute("SELECT * FROM services ORDER BY asset_id, port").fetchall()
         else:
@@ -318,8 +317,8 @@ class Store:
         )
         self.conn.commit()
 
-    def list_leads(self, service_id: Optional[int] = None,
-                   status: Optional[LeadStatus] = None) -> list[Lead]:
+    def list_leads(self, service_id: int | None = None,
+                   status: LeadStatus | None = None) -> list[Lead]:
         sql = "SELECT * FROM leads"
         clauses, params = [], []
         if service_id is not None:
@@ -402,7 +401,7 @@ class Store:
         self.conn.commit()
         return int(cur.lastrowid)
 
-    def list_credentials(self, service_id: Optional[int] = None) -> list[Credential]:
+    def list_credentials(self, service_id: int | None = None) -> list[Credential]:
         if service_id is None:
             rows = self.conn.execute(
                 "SELECT * FROM credentials ORDER BY id").fetchall()

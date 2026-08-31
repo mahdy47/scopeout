@@ -2,9 +2,9 @@
 
 import pytest
 
-from scopeout.core.model import Store
 from scopeout.core.importer import import_nmap_file
-from scopeout.core.planner import credential_suggestions, _service_name_family
+from scopeout.core.model import Store
+from scopeout.core.planner import _service_name_family, credential_suggestions
 
 BASE = """<?xml version="1.0" encoding="UTF-8"?>
 <nmaprun version="7.94" xmloutputversion="1.04">

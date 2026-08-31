@@ -16,8 +16,6 @@ The seed content is what M3's planner reads to distinguish
 
 from __future__ import annotations
 
-from typing import Optional
-
 from .model import Store
 
 # service-name -> preset
@@ -90,7 +88,7 @@ PRESETS: dict[str, dict] = {
 _SEEN_NO_PRESET = set()
 
 
-def preset_for(service_name: str) -> Optional[dict]:
+def preset_for(service_name: str) -> dict | None:
     """Return the preset dict for a service name, or None."""
     key = service_name.lower().strip()
     if not key:

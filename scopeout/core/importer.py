@@ -11,7 +11,6 @@ from __future__ import annotations
 import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from typing import Optional
 
 from .model import Store
 from .presets import seed_service
@@ -20,7 +19,7 @@ from .presets import seed_service
 _VERSION_HINTS = {"ssh", "http", "https", "smb", "ftp", "smb2", "netbios-ssn"}
 
 
-def _clean(text: Optional[str]) -> Optional[str]:
+def _clean(text: str | None) -> str | None:
     if text is None:
         return None
     return " ".join(text.split())
@@ -71,8 +70,8 @@ def parse_nmap_xml(xml_text: str) -> list[dict]:
         # Services
         services = []
         for port in host.iter("port"):
-            state = port.find("state")
-            if state is None or state.get("state") != "open":
+            port_state = port.find("state")
+            if port_state is None or port_state.get("state") != "open":
                 continue
             svc = port.find("service")
             port_id = port.get("portid")
@@ -113,7 +112,7 @@ def parse_nmap_xml(xml_text: str) -> list[dict]:
     return hosts
 
 
-def _parse_port(port_id: str, proto: str) -> Optional[int]:
+def _parse_port(port_id: str, proto: str) -> int | None:
     txt = port_id.strip().rstrip("/")
     try:
         return int(txt)
@@ -136,6 +135,7 @@ def import_nmap_file(store: Store, path: str | Path) -> dict:
           ],
         }
     """
+    _reject_url(str(path))
     xml_text = Path(path).read_text(encoding="utf-8")
     hosts = parse_nmap_xml(xml_text)
 

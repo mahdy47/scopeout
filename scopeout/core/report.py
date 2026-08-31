@@ -9,7 +9,7 @@ evidence; it only reflects what is stored.
 
 from __future__ import annotations
 
-from datetime import date
+from datetime import datetime, timezone
 
 from .model import LeadStatus, Store
 from .planner import _service_display
@@ -47,7 +47,7 @@ def build_report(store: Store) -> str:
 
     out.append("# Engagement Report")
     out.append("")
-    out.append(f"_Generated on {date.today().isoformat()}_")
+    out.append(f"_Generated on {datetime.now(tz=timezone.utc).date().isoformat()}_")
     out.append("")
     out.append(f"**Scope summary:** {len(assets)} host(s) in scope.")
     out.append("")

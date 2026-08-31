@@ -21,13 +21,12 @@ importer (see ``scopeout.web.seed``).
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional
 
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
-from scopeout.core.model import LeadStatus
+from scopeout.core.model import LeadStatus, Store
 from scopeout.core.planner import next_leads
 from scopeout.core.report import build_report
 
@@ -49,8 +48,8 @@ class Health(BaseModel):
 class Host(BaseModel):
     id: int
     ip: str
-    hostname: Optional[str]
-    os: Optional[str]
+    hostname: str | None
+    os: str | None
     service_count: int
     created_at: str
 
@@ -62,8 +61,8 @@ class Service(BaseModel):
     port: int
     proto: str
     name: str
-    version: Optional[str]
-    banner: Optional[str]
+    version: str | None
+    banner: str | None
 
 
 class Lead(BaseModel):
@@ -75,7 +74,7 @@ class Lead(BaseModel):
     reason: str
     evidence: str
     created_at: str
-    closed_at: Optional[str]
+    closed_at: str | None
 
 
 class Coverage(BaseModel):
@@ -126,8 +125,8 @@ class Summary(BaseModel):
 # ---------------------------------------------------------------------------
 
 
-def create_app(seed_path: Optional[str] = None,
-               store: Optional[Store] = None) -> FastAPI:
+def create_app(seed_path: str | None = None,
+               store: Store | None = None) -> FastAPI:
     _app = FastAPI(
         title="ScopeOut Web",
         description="Read-only web interface for the ScopeOut engagement-state engine.",
@@ -174,7 +173,7 @@ def create_app(seed_path: Optional[str] = None,
         return out
 
     @_app.get("/api/services", response_model=list[Service])
-    def services(asset_id: Optional[int] = None) -> list[Service]:
+    def services(asset_id: int | None = None) -> list[Service]:
         out = []
         for asset in store.list_assets():
             if asset_id is not None and int(asset.id) != asset_id:

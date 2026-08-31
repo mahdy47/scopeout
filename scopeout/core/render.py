@@ -12,9 +12,7 @@ auto-detection or an explicit --ascii flag.
 
 from __future__ import annotations
 
-import shutil
 import sys
-from typing import Optional
 
 from .model import LeadStatus, Store
 
@@ -84,7 +82,7 @@ def render_leads(leads, show_reason_detail: bool = False) -> str:
     # group by reason for a clean, non-noisy layout
     from collections import OrderedDict
 
-    groups: "OrderedDict[str, list]" = OrderedDict()
+    groups: OrderedDict[str, list] = OrderedDict()
     for n in leads:
         groups.setdefault(n.reason_key, []).append(n)
 
@@ -107,7 +105,7 @@ def render_leads(leads, show_reason_detail: bool = False) -> str:
 # --- status tree -------------------------------------------------------------
 
 
-def render_status(store: Store, asset, marks: Optional[dict] = None) -> str:
+def render_status(store: Store, asset, marks: dict | None = None) -> str:
     """Render the investigation tree for one asset (host).
 
     `marks` selects the glyph set; defaults to UNICODE_MARKS (callers that need
@@ -192,7 +190,7 @@ def render_credential_suggestions(suggestions) -> str:
 
     lines = ["CREDENTIAL REUSE (suggestions only - no automated checks)", ""]
 
-    groups: "OrderedDict[str, list]" = OrderedDict()
+    groups: OrderedDict[str, list] = OrderedDict()
     for s in suggestions:
         key = (s.origin_ip, s.origin_port, s.username)
         groups.setdefault(key, []).append(s)
